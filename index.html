@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>职业天赋测试 · 你是哪种职业人格</title>
+<style>
+  :root{
+    --accent:#3B5BDB; --accent-deep:#2742B0; --accent-soft:#EEF2FF; --accent-line:#C7D2FE;
+    --bg:#F4F6FB; --card:#FFFFFF; --ink:#1F2A44; --muted:#7B86A0; --line:#E6E9F2;
+    --pink-deep:#3B5BDB; --pink-soft:#EEF2FF; --pink-line:#C7D2FE;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:520px;margin:0 auto;padding:22px 16px 60px}
+  .card{background:var(--card);border-radius:18px;padding:20px;margin:14px 0;
+    box-shadow:0 6px 22px rgba(40,60,120,.06);border:1px solid var(--line)}
+  .hidden{display:none}
+  h1{font-size:30px;font-weight:800;margin:6px 0 4px;letter-spacing:1px}
+  h2{font-size:21px;font-weight:800;line-height:1.45;margin:0 0 14px}
+  h3{font-size:16px;font-weight:800;color:var(--accent-deep);margin:0 0 12px;
+    padding-left:11px;border-left:4px solid var(--accent)}
+  .eyebrow{font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:700;text-transform:uppercase}
+  .lead{font-size:14px;color:#56607a;line-height:1.8;margin:0 0 18px}
+  .muted{color:var(--muted);font-size:13px}
+  .btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;
+    background:linear-gradient(135deg,#4C6EF5,#3B5BDB);color:#fff;font-size:17px;font-weight:700;
+    cursor:pointer;margin-top:8px;box-shadow:0 8px 18px rgba(59,91,219,.28)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:#fff;color:var(--accent-deep);border:1px solid var(--accent-line);box-shadow:none}
+  .btn.small{font-size:14px;padding:9px 14px;width:auto;margin:0}
+  #pageCode{max-width:380px;margin:8vh auto 0;text-align:center}
+  .code-input{width:220px;font-size:30px;letter-spacing:14px;text-align:center;
+    padding:14px;border:2px solid var(--accent-line);border-radius:14px;background:var(--accent-soft);
+    color:var(--accent-deep);font-weight:800;margin:18px auto;display:block;outline:none}
+  .code-input:focus{border-color:var(--accent)}
+  .err{color:#C0392B;font-size:13px;margin-top:6px;min-height:18px}
+  /* intro */
+  .intro-emoji{font-size:44px;margin-bottom:8px}
+  .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 18px}
+  .intro-grid>div{background:var(--accent-soft);border-radius:14px;padding:14px;text-align:center}
+  .intro-grid b{display:block;color:var(--accent-deep);font-size:18px}
+  /* quiz */
+  .progress{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:14px}
+  .progress i{display:block;height:100%;background:linear-gradient(90deg,#4C6EF5,#3B5BDB);border-radius:6px;transition:width .3s}
+  .cat{font-size:13px;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .q-title{font-size:21px;font-weight:800;line-height:1.45;margin:0 0 20px}
+  .opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);
+    border-radius:13px;padding:14px 15px;margin:10px 0;font-size:15px;color:var(--ink);
+    cursor:pointer;transition:.15s}
+  .opt:active{transform:scale(.99)}
+  .opt.on{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+  .hint{font-size:12px;color:var(--muted)}
+  /* result */
+  .result-hero{text-align:center;padding:30px 18px 22px;
+    background:linear-gradient(160deg,#EEF2FF,#E7ECFF)}
+  .stamp{display:inline-block;font-size:12px;letter-spacing:2px;color:var(--accent);
+    border:1px solid var(--accent-line);border-radius:20px;padding:4px 12px;margin-bottom:10px}
+  .quote{font-size:13px;color:var(--muted);margin:8px 0 12px}
+  .tag-row{margin-top:4px}
+  .tag-row span{display:inline-block;margin:3px;padding:4px 12px;border-radius:14px;
+    background:#fff;border:1px solid var(--accent-line);font-size:12px;color:var(--accent-deep)}
+  .sec p{font-size:14px;color:#4a5575;line-height:1.75;margin:0}
+  .dim-row{display:flex;align-items:center;gap:10px;margin:9px 0}
+  .dim-row .name{flex:0 0 60px;font-size:13.5px;font-weight:700;color:var(--accent-deep)}
+  .dim-row .bar{flex:1;height:12px;background:var(--line);border-radius:7px;overflow:hidden}
+  .dim-row .bar i{display:block;height:100%;background:linear-gradient(90deg,#4C6EF5,#3B5BDB);border-radius:7px}
+  .dim-row .num{flex:0 0 40px;text-align:right;font-weight:800;color:var(--accent-deep);font-size:14px}
+  .dim-deep{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:12px 14px;margin:10px 0}
+  .dd-head{display:flex;justify-content:space-between;align-items:center}
+  .dd-head b{color:var(--accent-deep);font-size:16px}
+  .dd-pct{font-weight:800;color:var(--accent-deep)}
+  .dd-bar{height:8px;background:#fff;border-radius:4px;margin:8px 0;overflow:hidden;border:1px solid var(--accent-line)}
+  .dd-bar i{display:block;height:100%;background:linear-gradient(90deg,#4C6EF5,#3B5BDB);border-radius:4px}
+  .dd-label{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
+  .dd-text{font-size:13.5px;color:#4a5575;line-height:1.7;margin:0}
+  .plan-lead{font-size:13.5px;color:var(--muted);margin:0 0 12px}
+  .plan-grid{display:grid;grid-template-columns:1fr;gap:10px}
+  @media(min-width:480px){.plan-grid{grid-template-columns:1fr 1fr 1fr}}
+  .plan-col{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:12px}
+  .plan-col>b{display:block;font-size:14px;color:var(--accent-deep);margin-bottom:8px}
+  .plan-col ul{margin:0;padding-left:0;list-style:none}
+  .plan-col li{font-size:13px;color:#4a5575;line-height:1.6;margin:6px 0;padding-left:18px;position:relative}
+  .plan-col li:before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:700}
+  .rec-card{border:1px solid var(--accent-line);border-radius:14px;padding:12px 14px;margin:10px 0;background:#fff}
+  .rec-head{display:flex;align-items:center;gap:8px}
+  .rec-rank{flex:0 0 22px;height:22px;border-radius:7px;background:var(--accent);color:#fff;font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .rec-head b{flex:1;font-size:14.5px;color:var(--ink)}
+  .rec-pct{font-weight:800;color:var(--accent-deep)}
+  .rec-bar{height:6px;background:var(--accent-soft);border-radius:3px;margin:8px 0 6px;overflow:hidden}
+  .rec-bar i{display:block;height:100%;background:linear-gradient(90deg,#4C6EF5,#3B5BDB);border-radius:3px}
+  .rec-why{font-size:13px;color:var(--muted);margin:0 0 4px;line-height:1.6}
+  .rec-tags span{display:inline-block;margin:2px 4px 0 0;padding:2px 9px;border-radius:10px;background:var(--accent-soft);color:var(--accent-deep);font-size:11px}
+  .lines{margin:0;padding-left:0;list-style:none}
+  .lines li{font-size:14px;color:#4a5575;margin:8px 0;padding-left:14px;border-left:3px solid var(--accent-line)}
+  .note{background:var(--accent-soft);border-radius:14px;padding:14px 16px;font-size:13px;color:#5a6488;line-height:1.7;margin-top:16px;border:1px solid var(--accent-line)}
+  .tip-longpress{text-align:center;font-size:12.5px;color:var(--muted);background:#fff;border:1px dashed var(--accent-line);border-radius:12px;padding:10px;margin-top:10px}
+  .admin-box{font-size:13px;color:#41507a;line-height:1.9}
+  .admin-box b{color:var(--accent-deep)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 密码页 -->
+  <div id="pageCode" class="card">
+    <div class="intro-emoji">🧭</div>
+    <div class="eyebrow">CAREER TALENT TEST</div>
+    <h1>职业天赋测试</h1>
+    <p class="muted" style="margin:6px 0 0">你是哪种职业人格？先输入访问密码</p>
+    <input id="codeInput" class="code-input" type="tel" maxlength="6" inputmode="numeric" autocomplete="off" placeholder="······">
+    <div id="codeErr" class="err"></div>
+    <button class="btn" onclick="checkCode()">解锁</button>
+  </div>
+
+  <!-- 开场页 -->
+  <div id="pageIntro" class="card hidden" style="margin-top:30px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="intro-emoji">🧭</div>
+      <div class="eyebrow">CAREER TALENT TEST</div>
+      <h1>你骨子里<br>是哪种职业人格？</h1>
+      <p class="lead" style="text-align:left">
+        职业顾问霍兰德把人分成六种类型：现实、研究、艺术、社会、企业、常规。
+        通过 20 个关于「你自然会怎么选」的情境，读出你的主导类型，
+        最后告诉你：你天生适合往哪儿使劲、哪些职业和你最合拍。
+      </p>
+    </div>
+    <div class="intro-grid">
+      <div><b>20 情境</b><small class="muted">约 4 分钟</small></div>
+      <div><b>6 型人格</b><small class="muted">霍兰德 RIASEC</small></div>
+    </div>
+    <button class="btn" onclick="startQuiz()">开始测</button>
+    <div class="note">本测试基于霍兰德职业兴趣理论（RIASEC）的通俗化改编，结果供自我探索与职业参考，不构成专业职业指导。</div>
+  </div>
+
+  <!-- 答题页 -->
+  <div id="pageQuiz" class="hidden" style="margin-top:20px">
+    <div class="progress"><i id="bar" style="width:0%"></i></div>
+    <div class="card">
+      <div class="cat" id="qCat"></div>
+      <h2 class="q-title" id="qTitle"></h2>
+      <div id="qOpts"></div>
+      <div class="nav-row">
+        <button class="btn ghost small" id="prevBtn" onclick="prevQ()">上一题</button>
+        <span class="hint" id="qHint">选择后自动进入下一题</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果页 -->
+  <div id="pageResult" class="hidden" style="margin-top:20px"></div>
+
+</div>
+
+<script>
+/* ==================== 商家配置区 ==================== */
+/* 说明：全网通用一个固定访问密码，所有客人都输这一串。
+   想改密码，只改下面 ACCESS_CODE 的值即可（保持 6 位数字）。 */
+
+const ACCESS_CODE = "429716";            // 固定访问密码（6 位数字），所有客人通用
+
+const HIGH_PCT = 30;
+const MIN_VALID = 8;
+const BRAND_LINE = "";                   // 结果图底部署名，留空则不显示，例如："金安念宠 · 出品"
+
+/* ==================== 霍兰德六型 ==================== */
+const TYPES = {
+  R:{code:"R", name:"现实型", short:"实干家",
+     deep:{high:"动手天赋满格 · 你是天生的行动派", mid:"动手在线 · 还能更敢上手", low:"动手待唤醒 · 先从一件小事做起"}},
+  I:{code:"I", name:"研究型", short:"思考者",
+     deep:{high:"思辨天赋满格 · 逻辑是你的舒适区", mid:"思辨在线 · 还差一段深想时间", low:"思辨待唤醒 · 多问一层为什么"}},
+  A:{code:"A", name:"艺术型", short:"创造者",
+     deep:{high:"创造天赋满格 · 表达欲是硬通货", mid:"创造在线 · 还差一个出口", low:"创造待唤醒 · 允许自己不守规矩"}},
+  S:{code:"S", name:"社会型", short:"联结者",
+     deep:{high:"共情天赋满格 · 你天生懂人", mid:"共情在线 · 还差主动一步", low:"共情待唤醒 · 多问一句你怎么样"}},
+  E:{code:"E", name:"企业型", short:"开拓者",
+     deep:{high:"影响天赋满格 · 你敢冲敢带", mid:"影响在线 · 还差迈一小步", low:"影响待唤醒 · 先说一件算数的事"}},
+  C:{code:"C", name:"常规型", short:"秩序者",
+     deep:{high:"秩序天赋满格 · 你把混乱理顺", mid:"秩序在线 · 还差先交再改", low:"秩序待唤醒 · 给一周定个小清单"}}
+};
+const DIMS = ["R","I","A","S","E","C"];
+const DIM_NAME = {R:"现实型",I:"研究型",A:"艺术型",S:"社会型",E:"企业型",C:"常规型"};
+
+/* 主导类型人设（结果页主体文案） */
+const PROFILE = {
+  R:{name:"实干家", sub:"现实型主导 · 用双手把事做成",
+     portrait:"你信得过的，是手感和结果，不是漂亮的词。碰到问题你先动手试，在试里把事做成——这种落地能力，很多人只会说不会做。",
+     blind:"你容易嫌想得多的人『磨叽』，但有些事真得先想清楚再干；也别因为不爱表达，让付出被当成『应该的』。",
+     advice:"把动手优势用在对的地方：选能立刻看到成果的事。同时练一句『我做了什么』——你的价值值得被说出来。",
+     lines:["做了，才知道行不行。","手别停，路就通。","粗糙地开始，好过完美地卡住。"],
+     plan:{near:["本周亲手完成一件能拿出来的小作品","把『我做了啥』发一条朋友圈/群，练表达","遇到事先试再做，不空想"],
+           mid:["系统学一门能变现的手艺或工具","找一个『想得多』的搭档互补","建一份自己的作品集/案例库"],
+           far:["让动手成为你的职业护城河","别只执行，试着带人把事做出来","把经验沉淀成可复用的方法"]},
+     tips:"适配岗位：技术 / 操作 / 执行类。面试多讲『我做过』的具体案例。"},
+  I:{name:"思考者", sub:"研究型主导 · 用逻辑把事想透",
+     portrait:"你对『为什么』上瘾。别人看图，你看背后的逻辑和规律；一个问题能让你钻进去忘了时间。这种深想，是稀缺货。",
+     blind:"想透了不等于做完了。你容易在脑子里把方案推到九十分，却迟迟不落地；也别用『再研究研究』回避该做的决定。",
+     advice:"给研究设 deadline：到时间就出结论、就行动。找一两个『执行力搭子』，把你想到的事变成真的。",
+     lines:["先问为什么，再问怎么做。","想清楚，是种稀缺的能力。","别让完美方案，死在草稿里。"],
+     plan:{near:["对一个小决定多问一层『为什么』","每天留 30 分钟不被打断的深想时间","把一个想法写成一页纸结论"],
+           mid:["学一种分析模型/工具（数据、逻辑都行）","找一个『能落地』的搭档把想法变项目","定期输出：文章/笔记/分享"],
+           far:["让『想透』成为你的招牌","从思考者进化成『想清+做成』的人","在某一领域说到算话"]},
+     tips:"适配岗位：研发 / 分析 / 研究类。表达时用『数据 + 结论』说话最加分。"},
+  A:{name:"创造者", sub:"艺术型主导 · 用表达把事点亮",
+     portrait:"你需要腾出空间，而不是被规矩填满。你点子多、感受细，能把普通的日子过出美感——这是 AI 暂时替代不了的。",
+     blind:"你讨厌被框，但也容易散。deadline 前才开始、东西做了又推翻，是家常便饭；别让『没灵感』成了拖延的借口。",
+     advice:"给创意一个容器：固定时间写/画/做，灵感是练出来的不是等来的。和能落地的人搭档，你的点子才出得了门。",
+     lines:["美感和想法，是你的硬通货。","先完成，再完美。","规矩是别人的，感觉是你的。"],
+     plan:{near:["本周产出一件『完成态』的小作品","固定一个创作时间（哪怕每周 2 小时）","少说『没灵感』，先动手做一版"],
+           mid:["建一个能展示的作品集","找一个执行型搭档把点子落地","接一两个真实命题练手"],
+           far:["让『创造』成为职业身份","把感受力变成别人付费的东西","形成自己的风格，而不只是会做"]},
+     tips:"适配岗位：设计 / 内容 / 艺术相关。作品集比简历更有说服力。"},
+  S:{name:"联结者", sub:"社会型主导 · 用温度把人连起",
+     portrait:"你天生能接住人。谁难受了你先察觉，谁卡了你愿意带一程。这种『让人舒服』的能力，是团队里最贵的黏合剂。",
+     blind:"你太在乎别人，常把自己放最后；也容易被情绪拖着走，分不清『他的事』和『我的事』。",
+     advice:"先把『自己』照顾好，才有余力助人。学会说『我帮不了这个』，不是冷漠，是边界。选和人打交道的活，你才不内耗。",
+     lines:["被需要，是你的光。","先暖自己，再暖别人。","会听，是一种超能力。"],
+     plan:{near:["本周主动约一次深度聊天","对别人的事，先分清『他的』还是『我的』","每天留一点『只属于自己』的时间"],
+           mid:["学一点沟通/倾听的硬方法","把『助人』变成可描述的本事","设定清晰的边界，敢说不行"],
+           far:["让『懂人』成为职业资产","从被需要到被信任、被依赖","带出人来，而不只是陪着人"]},
+     tips:"适配岗位：教育 / 服务 / 人力 / 咨询。简历写『带过多少人、解决过什么』。"},
+  E:{name:"开拓者", sub:"企业型主导 · 用冲劲把事推进",
+     portrait:"你看到机会就想冲，看到人就想影响。目标感强、不怕开口，是那种『这事交给我』的人——稀缺的行动派。",
+     blind:"你容易上头就拍板，细节和后劲没跟上；也别把『说服』变成『压人』，赢了争论输了人。",
+     advice:"冲之前先数三秒：资源、风险、退出路径都想清了吗？配一个靠谱的执行者，你的野心才落得地。",
+     lines:["看见机会，就先迈腿。","能扛事，才扛得住名。","会带人，路才越走越宽。"],
+     plan:{near:["本周主动推进一件『我说了算』的小事","冲之前先列：资源/风险/退路","练一次『说服而不压人』的沟通"],
+           mid:["找一个执行型搭档互补短板","把野心拆成季度小目标","学一点基本的财务/谈单"],
+           far:["让『影响』成为你的杠杆","从自己冲，到带一群人冲","把事儿做成，也把人带起来"]},
+     tips:"适配岗位：销售 / 创业 / 管理 / 市场。用『结果』证明自己最管用。"},
+  C:{name:"秩序者", sub:"常规型主导 · 用稳定把底盘筑牢",
+     portrait:"你把乱糟糟的世界理顺。数据、流程、规则，到你手里就各就各位。这种稳，是很多团队看不见的底座。",
+     blind:"你追求确定，遇到变数容易慌；也别因为怕出错，一直待在舒适区不敢动。",
+     advice:"你的靠谱本身就是竞争力。试着偶尔『先做了再调』，小步试错不会塌；把规则用活，你就不只是执行者。",
+     lines:["稳，是最好的油门。","把事理顺，就赢了一半。","靠谱，是最长情的才华。"],
+     plan:{near:["本周给一块工作定个小清单并清零","练一次『先交再改』而非一次做对","把常用流程写成一条 checklist"],
+           mid:["学一点自动化/效率工具","在稳的基础上，主动接一个有点变数的活","把『零差错』变成可证明的案例"],
+           far:["让『稳』成为团队信任的底座","从执行者成长为准流程的设计者","在不确定里，也能稳住自己"]},
+     tips:"适配岗位：财务 / 行政 / 运营 / 审计。简历突出『零差错』『流程优化』。"}
+};
+
+/* 题目：每题选项映射到 R/I/A/S/E/C，部分含「没偏好」→ none */
+const QUESTIONS = [
+  ["空闲偏好", "周末你最可能这样过：", [["窝家里修个东西 / 做手工","R"],["啃一本烧脑的书","I"],["去看展 / 看剧 / 瞎拍","A"],["约朋友出来聚","S"]]],
+  ["工作动机", "选工作你最在意：", [["能立刻看到做出来的东西","R"],["能不断学新东西","I"],["够自由不束缚","A"],["能和很多人打交道","S"]]],
+  ["团队角色", "团队里你常是那个：", [["把活干完的人","R"],["出方案的人","I"],["出点子的人","A"],["张罗的人","E"]]],
+  ["反感项", "你更受不了：", [["动脑算细账","C"],["没人对接","S"],["被条条框框绑死","A"],["没结果地瞎忙","R"],["看情况，没偏好","none"]]],
+  ["学习方式", "学新东西你习惯：", [["拆开看结构","I"],["照着做一遍","R"],["找个好玩角度","A"],["拉人一起学","S"]]],
+  ["爽点", "你心里的「爽」是：", [["修好一样东西","R"],["想通一个难题","I"],["做出一个作品","A"],["谈成一笔事","E"]]],
+  ["生活秩序", "整理房间你：", [["顺手归类放好","C"],["乱中有序就行","A"],["懒得理它","R"],["拉着家人一起","S"],["都行，看心情","none"]]],
+  ["向往身份", "你更想成为：", [["工程师 / 匠人","R"],["科学家 / 分析师","I"],["作家 / 设计师","A"],["老师 / 咨询师","S"]]],
+  ["会议风格", "开会你通常：", [["记要点跟进度","C"],["抛数据讲逻辑","I"],["画大饼给方向","E"],["调和气氛","S"]]],
+  ["故障应对", "碰到 bug / 故障你：", [["直接拆了查","R"],["查资料定位","I"],["找人吐槽再搞","S"],["算了换条路","A"]]],
+  ["表达风格", "你写东西偏：", [["列 123 条理清晰","C"],["有数据有结论","I"],["有画面有情绪","A"],["有号召力","E"]]],
+  ["工作形态", "你更愿意：", [["跑现场","R"],["坐办公室研究","I"],["自由接活","A"],["当个小领导","E"]]],
+  ["被需要", "朋友找你多半是：", [["帮忙修 / 搬","R"],["问思路","I"],["聊心事","S"],["拉你入伙搞事","E"]]],
+  ["规则态度", "对规则你：", [["照章办事","C"],["先问凭什么","I"],["能破就破","A"],["看谁定的","E"],["看情况","none"]]],
+  ["放松方式", "你松弛的方式是：", [["运动 / 动手","R"],["独处想事","I"],["创作 / 听歌","A"],["和人待着","S"]]],
+  ["欣赏的人", "你更佩服：", [["手艺牛的","R"],["脑子清的","I"],["有审美的","A"],["会来事的","E"]]],
+  ["项目启动", "做一个项目你先：", [["列清单排期","C"],["搞清楚目标逻辑","I"],["想个新鲜玩法","A"],["组队分工","S"]]],
+  ["易烦点", "你容易烦：", [["没进展空转","R"],["没逻辑瞎搞","I"],["太死板","A"],["太随意没谱","C"],["看状态","none"]]],
+  ["想学", "你更想学：", [["一门手艺","R"],["一种分析模型","I"],["一种表达形式","A"],["一门沟通术","S"]]],
+  ["五年后", "五年后你希望：", [["有拿得出手的作品","A"],["在某个领域说得上话","I"],["带一帮人成事","E"],["把日子过稳","C"],["还没想清","none"]]]
+];
+
+/* 推荐职业库（RIASEC 三字母代码） */
+const CAREERS = [
+  {code:"RIC",name:"机械 / 电气工程师",tags:["动手","技术"]},
+  {code:"RIS",name:"兽医 / 宠物医生",tags:["生命","实操"]},
+  {code:"RIA",name:"建筑师",tags:["空间","创造"]},
+  {code:"RSE",name:"运动员 / 体能教练",tags:["身体","竞技"]},
+  {code:"RIC",name:"电工 / 维修技师",tags:["稳定","技术"]},
+  {code:"RCS",name:"厨师 / 烘焙师",tags:["手艺","生活"]},
+  {code:"IAR",name:"科研人员",tags:["探索","深度"]},
+  {code:"ICR",name:"数据分析师",tags:["逻辑","数据"]},
+  {code:"ISE",name:"医生 / 临床",tags:["专业","助人"]},
+  {code:"IRC",name:"程序员 / 开发",tags:["逻辑","构建"]},
+  {code:"ISA",name:"心理咨询师",tags:["洞察","共情"]},
+  {code:"IAR",name:"天文 / 地理研究者",tags:["好奇","远方"]},
+  {code:"ARI",name:"工业 / 产品设计师",tags:["审美","实用"]},
+  {code:"ASI",name:"作家 / 文案",tags:["表达","思想"]},
+  {code:"AER",name:"导演 / 编导",tags:["叙事","掌控"]},
+  {code:"ARS",name:"摄影师 / 插画师",tags:["视觉","自由"]},
+  {code:"AIR",name:"音乐人 / 作曲",tags:["感受","创造"]},
+  {code:"ASE",name:"艺术策展 / 文创",tags:["品味","联结"]},
+  {code:"SIA",name:"教师 / 培训师",tags:["传授","耐心"]},
+  {code:"SAE",name:"社工 / 公益",tags:["温度","行动"]},
+  {code:"SIC",name:"护士 / 健康管理",tags:["照护","专业"]},
+  {code:"SEC",name:"人力资源",tags:["识人","组织"]},
+  {code:"SAE",name:"幼教 / 特教",tags:["陪伴","细腻"]},
+  {code:"SIR",name:"职业规划师",tags:["倾听","方法"]},
+  {code:"ESC",name:"创业者 / 老板",tags:["冒险","全局"]},
+  {code:"ESA",name:"销售 / 商务",tags:["影响","人脉"]},
+  {code:"ECS",name:"市场 / 品牌经理",tags:["策略","表达"]},
+  {code:"ECR",name:"项目经理",tags:["推进","统筹"]},
+  {code:"ESC",name:"门店 / 区域店长",tags:["经营","带人"]},
+  {code:"EAS",name:"公关 / 商务拓展",tags:["链接","活络"]},
+  {code:"CRI",name:"会计 / 审计",tags:["精确","稳妥"]},
+  {code:"CSR",name:"行政 / 秘书",tags:["条理","支撑"]},
+  {code:"CRI",name:"银行 / 风控",tags:["严谨","安全"]},
+  {code:"CIE",name:"法务 / 合规",tags:["规则","判断"]},
+  {code:"CRS",name:"仓库 / 物流调度",tags:["秩序","效率"]},
+  {code:"CIS",name:"数据运营",tags:["整理","洞察"]}
+];
+
+/* ==================== 状态 / 密码 ==================== */
+const STORE_KEY = "career_test_v1";
+function hashCode(s){
+  let h1=0x12345678,h2=0x87654321;
+  for(let i=0;i<s.length;i++){
+    h1=(h1^Math.imul(s.charCodeAt(i),2654435761))>>>0;
+    h2=(h2+Math.imul(s.charCodeAt(i),40503))>>>0;
+  }
+  return ("00000000"+h1.toString(16)).slice(-8)+("00000000"+h2.toString(16)).slice(-8);
+}
+function loadStore(){
+  try{ const raw=localStorage.getItem(STORE_KEY); if(raw) return JSON.parse(raw); }catch(e){}
+  return {tries:0,lockUntil:0,unlocked:null,progress:null};
+}
+function saveStore(s){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(s)); }catch(e){} }
+let store = loadStore();
+
+function checkCode(){
+  const v=(document.getElementById('codeInput').value||"").trim();
+  const err=document.getElementById('codeErr');
+  if(!/^\d{6}$/.test(v)){ err.textContent="请输入 6 位数字访问码"; return; }
+  const now=Date.now();
+  if(store.lockUntil && now<store.lockUntil){
+    const sec=Math.ceil((store.lockUntil-now)/1000);
+    err.textContent="尝试次数过多，请 "+sec+" 秒后再试"; return;
+  }
+  if(v===ACCESS_CODE){
+    store.tries=0; store.lockUntil=0; store.unlocked=1; store.progress=null; saveStore(store);
+    err.textContent=""; enterIntro();
+  } else {
+    store.tries=(store.tries||0)+1;
+    if(store.tries>=5){ store.lockUntil=now+60*1000; store.tries=0; }
+    saveStore(store);
+    err.textContent="访问码无效，请核对后重试";
+  }
+}
+document.getElementById('codeInput').addEventListener('keydown',e=>{ if(e.key==='Enter') checkCode(); });
+document.getElementById('codeInput').addEventListener('input',function(){ this.value=this.value.replace(/\D/g,'').slice(0,6); });
+
+/* ==================== 流程 ==================== */
+let state={idx:0, scores:{R:0,I:0,A:0,S:0,E:0,C:0}, answers:[]};
+function show(id){ ['pageCode','pageIntro','pageQuiz','pageResult'].forEach(p=>{
+  document.getElementById(p).classList.toggle('hidden', p!==id); }); }
+function enterIntro(){ show('pageIntro'); window.scrollTo({top:0}); }
+function startQuiz(){
+  state={idx:0, scores:{R:0,I:0,A:0,S:0,E:0,C:0}, answers:[]};
+  if(store.progress) store.progress=null;
+  renderQ(); show('pageQuiz'); window.scrollTo({top:0});
+}
+function renderQ(){
+  const q=QUESTIONS[state.idx];
+  document.getElementById('qCat').textContent=q[0];
+  document.getElementById('qTitle').textContent=q[1];
+  const box=document.getElementById('qOpts'); box.innerHTML='';
+  const prev=state.answers[state.idx];
+  q[2].forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='opt'+(prev===i?' on':'');
+    b.textContent=opt[0];
+    b.onclick=()=>choose(i);
+    box.appendChild(b);
+  });
+  document.getElementById('bar').style.width=Math.round(state.idx/QUESTIONS.length*100)+'%';
+  document.getElementById('prevBtn').style.visibility=state.idx>0?'visible':'hidden';
+}
+function choose(i){
+  const q=QUESTIONS[state.idx]; const dim=q[2][i][1];
+  state.answers[state.idx]=i;
+  if(dim!=='none') state.scores[dim]=(state.scores[dim]||0)+1;
+  document.querySelectorAll('#qOpts .opt').forEach((o,k)=>o.classList.toggle('on',k===i));
+  setTimeout(()=>{
+    if(state.idx<QUESTIONS.length-1){ state.idx++; renderQ(); }
+    else finish();
+  },180);
+}
+function prevQ(){ if(state.idx>0){ state.idx--; renderQ(); } }
+
+function finish(){
+  document.getElementById('bar').style.width='100%';
+  const sc=state.scores;
+  const valid=DIMS.reduce((a,d)=>a+(sc[d]||0),0);
+  const pct=DIMS.map(d=> valid? Math.round((sc[d]||0)/valid*100):0 );
+  const ranked=DIMS.map((d,i)=>({d,p:pct[i]})).sort((a,b)=>b.p-a.p);
+  const top=ranked.filter(x=>x.p>0);
+  const t1=top[0]?top[0].d:'I';
+  const t2=top[1]?top[1].d:'S';
+  const t3=top[2]?top[2].d:'C';
+  const code=[t1,t2,t3].map(d=>TYPES[d].code).join('');
+  const arch=PROFILE[t1];
+  const el=document.getElementById('pageResult');
+
+  /* 推荐职业：按与 top3 的契合度排序取前 6 */
+  const w={[t1]:40,[t2]:33,[t3]:27};
+  const matched=CAREERS.map(c=>{
+    let s=0; for(const ch of c.code) s+=w[ch]||0;
+    return {c, pct:Math.min(100,s)};
+  }).sort((a,b)=>b.pct-a.pct).slice(0,6);
+
+  el.innerHTML=
+    '<div class="card result-hero">' +
+      '<div class="stamp">你的职业天赋类型</div>' +
+      '<h1>'+arch.name+'</h1>' +
+      '<div class="muted" style="font-size:15px">'+arch.sub+'</div>' +
+      '<div class="quote">霍兰德代码：'+code+'（'+DIM_NAME[t1]+'·'+DIM_NAME[t2]+'·'+DIM_NAME[t3]+'）</div>' +
+      '<div class="tag-row">'+[t1,t2,t3].map(d=>'<span>'+DIM_NAME[d]+'</span>').join('')+'</div>' +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>01 · 你的六大职业倾向</h3>' +
+      DIMS.map((d,i)=>'<div class="dim-row"><span class="name">'+DIM_NAME[d]+'</span><span class="bar"><i style="width:'+pct[i]+'%"></i></span><span class="num">'+pct[i]+'%</span></div>').join('') +
+      '<p style="margin-top:12px;font-size:13px;color:#7B86A0">六型占比越高，越代表你在这类活里更自在、更有后劲。三项加起来是你的主导组合。</p>' +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>02 · 核心优势组合</h3>' +
+      '<p>你最突出的两种天赋是 <b style="color:var(--accent-deep)">'+DIM_NAME[t1]+'</b> 与 <b style="color:var(--accent-deep)">'+DIM_NAME[t2]+'</b>：'+
+      TYPES[t1].short+'的「'+PROFILE[t1].sub.split(' · ')[1]+'」配上'+TYPES[t2].short+'的底色，让你在「'+PROFILE[t1].sub.split(' · ')[0]+'」这类事上，既有冲劲也有方法。简单说——你天生适合 <b style="color:var(--accent-deep)">'+PROFILE[t1].sub.split(' · ')[0]+'</b> 的方向，再借 '+DIM_NAME[t2]+' 把事做深。</p>' +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>03 · 你的潜在挑战</h3>' +
+      '<p>'+arch.blind+'</p>' +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>04 · 核心优势深度解读</h3>' +
+      DIMS.map((d,i)=>{
+        const lvl=pct[i]>=35?'high':(pct[i]>=18?'mid':'low');
+        const dep=TYPES[d].deep[lvl];
+        return '<div class="dim-deep">'+
+          '<div class="dd-head"><b>'+DIM_NAME[d]+'</b><span class="dd-pct">'+pct[i]+'%</span></div>'+
+          '<div class="dd-bar"><i style="width:'+pct[i]+'%"></i></div>'+
+          '<div class="dd-label">'+dep.label+'</div>'+
+          '<p class="dd-text">'+dep.text+'</p>'+
+        '</div>';
+      }).join('') +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>05 · 给你的建议</h3>' +
+      '<p>'+arch.advice+'</p>' +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>06 · 你的成长行动计划</h3>' +
+      '<p class="plan-lead">一份可以直接照着做的清单——从「看到结果」到「真的长进」。建议先从近期目标里挑 1-2 条开始。</p>' +
+      '<div class="plan-grid">' +
+        '<div class="plan-col"><b>🎯 近期 · 本周能做</b><ul>'+arch.plan.near.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>' +
+        '<div class="plan-col"><b>📈 中期 · 1-3 个月</b><ul>'+arch.plan.mid.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>' +
+        '<div class="plan-col"><b>🌅 长期 · 持续练习</b><ul>'+arch.plan.far.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>07 · 推荐职业方向</h3>' +
+      '<p class="plan-lead">按你「'+code+'」的霍兰德代码，匹配度最高的 6 个方向（仅供参考，别被标签框住）：</p>' +
+      matched.map((m,i)=>
+        '<div class="rec-card">'+
+          '<div class="rec-head"><span class="rec-rank">'+(i+1)+'</span><b>'+m.c.name+'</b><span class="rec-pct">'+m.pct+'%</span></div>'+
+          '<div class="rec-bar"><i style="width:'+m.pct+'%"></i></div>'+
+          '<p class="rec-why">与你的「'+DIM_NAME[t1]+'+'+DIM_NAME[t2]+'」天赋高度契合，发挥空间大。</p>'+
+          '<div class="rec-tags">'+m.c.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>'+
+        '</div>'
+      ).join('') +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>08 · 小贴士</h3>' +
+      '<p>'+arch.tips+'</p>' +
+    '</div>' +
+
+    '<div class="card sec">' +
+      '<h3>09 · 保存你的专属结果图</h3>' +
+      '<div id="imgBox"><div class="muted" style="text-align:center;padding:10px 0">结果图生成中…</div></div>' +
+      '<div class="tip-longpress" id="longpressTip" style="display:none">长按上方图片 → 保存到相册 / 发给朋友</div>' +
+      '<button class="btn ghost" style="margin-top:12px" onclick="downloadImg()">下载图片（电脑端可用）</button>' +
+    '</div>' +
+
+    '<div class="note">本测试基于霍兰德职业兴趣理论（RIASEC）的通俗化改编，结果供自我探索与职业参考，不构成专业职业指导。</div>' +
+
+    '<div style="margin-top:18px"><button class="btn ghost" onclick="restart()">再测一次</button></div>';
+
+  window.scrollTo({top:0});
+  window.__result={arch,pct,code,top,matched};
+  show('pageResult');
+  setTimeout(()=>buildImg(),60);
+}
+
+function restart(){ store.progress=null; startQuiz(); }
+
+/* ==================== Canvas 出图 ==================== */
+function buildImg(){
+  const {arch,pct,code,top,matched}=window.__result;
+  const W=750, margin=50;
+  const c=document.createElement('canvas'); const ctx=c.getContext('2d');
+  const wrap=(text,maxW)=>{
+    ctx.font='26px "PingFang SC",sans-serif'; const lines=[]; let line='';
+    for(const ch of text){
+      const test=line+ch;
+      if(ctx.measureText(test).width>maxW && line){ lines.push(line); line=ch; }
+      else line=test;
+    }
+    if(line) lines.push(line); return lines;
+  };
+  const bodyW=W-margin*2;
+  const nameLines=wrap(arch.name,bodyW);
+  const subLines=wrap(arch.sub,bodyW);
+  const recLines=matched.map(m=>m.c.name+'  '+m.pct+'%');
+  const H=200+nameLines.length*46+subLines.length*40+DIMS.length*46+recLines.length*40+120;
+  c.width=W; c.height=H;
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#EEF2FF'); bg.addColorStop(1,'#E3E9FF');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  let y=64; ctx.textAlign='center';
+  ctx.fillStyle='#2742B0'; ctx.font='600 22px sans-serif';
+  ctx.fillText('你的职业天赋类型',W/2,y); y+=42;
+  ctx.fillStyle='#1F2A44'; ctx.font='800 44px sans-serif';
+  nameLines.forEach(l=>{ ctx.fillText(l,W/2,y); y+=46; }); y+=8;
+  ctx.fillStyle='#56607a'; ctx.font='400 22px sans-serif';
+  subLines.forEach(l=>{ ctx.fillText(l,W/2,y); y+=40; }); y+=20;
+  ctx.fillStyle='#3B5BDB'; ctx.font='700 20px sans-serif';
+  ctx.fillText('霍兰德代码 '+code,W/2,y); y+=34;
+  ctx.strokeStyle='#C7D2FE'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(margin,y); ctx.lineTo(W-margin,y); ctx.stroke(); y+=34;
+  ctx.textAlign='left';
+  DIMS.forEach((d,i)=>{
+    ctx.fillStyle='#41507a'; ctx.font='400 22px sans-serif'; ctx.fillText(DIM_NAME[d],margin,y+22);
+    ctx.fillStyle='#E7ECFF'; roundRect(ctx,margin+150,y+8,bodyW-210,16,8); ctx.fill();
+    ctx.fillStyle='#4C6EF5'; roundRect(ctx,margin+150,y+8,(bodyW-210)*pct[i]/100,16,8); ctx.fill();
+    ctx.fillStyle='#2742B0'; ctx.font='700 22px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(pct[i]+'%',W-margin,y+24); ctx.textAlign='left'; y+=46;
+  });
+  y+=14;
+  ctx.fillStyle='#2742B0'; ctx.font='700 22px sans-serif';
+  ctx.fillText('推荐职业方向',margin,y); y+=34;
+  ctx.fillStyle='#1F2A44'; ctx.font='400 24px sans-serif';
+  recLines.forEach(l=>{ ctx.fillText((recLines.indexOf(l)+1)+'. '+l,margin,y+26); y+=40; });
+  const brandH=BRAND_LINE?60:0;
+  if(BRAND_LINE){ y+=10; ctx.textAlign='center'; ctx.fillStyle='#7B86A0'; ctx.font='400 20px sans-serif'; ctx.fillText(BRAND_LINE,W/2,y+20); }
+  const img=c.toDataURL('image/png');
+  const box=document.getElementById('imgBox');
+  if(box){ box.innerHTML='<img class="share-img" src="'+img+'" alt="结果图">';
+    const tip=document.getElementById('longpressTip'); if(tip) tip.style.display='block';
+    window.__shareImg=img;
+  }
+}
+function roundRect(ctx,x,y,w,h,r){
+  if(w<2*r) r=w/2; ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function downloadImg(){
+  if(!window.__shareImg) return;
+  const a=document.createElement('a'); a.href=window.__shareImg; a.download='职业天赋类型.png'; a.click();
+}
+
+/* ==================== 商家后台：?admin=1 ==================== */
+(function(){
+  const q=new URLSearchParams(location.search);
+  const admin=q.get('admin');
+  if(admin==='1'){
+    document.getElementById('pageCode').classList.add('hidden');
+    const status=store.unlocked?'本机已解锁（曾经输过密码）':'本机尚未解锁';
+    const box=document.createElement('div');
+    box.className='card admin-box'; box.style.marginTop='30px';
+    box.innerHTML='<h1 style="font-size:20px">商家后台（仅本机可见）</h1>'+
+      '<p><b>访问密码：</b>'+ACCESS_CODE+'（所有客人通用）</p>'+
+      '<p><b>本机状态：</b>'+status+'</p>'+
+      '<p class="muted">想改密码，改源码里 ACCESS_CODE 的值即可。</p>';
+    document.querySelector('.wrap').appendChild(box); return;
+  }
+  const preset=q.get('code');
+  if(preset){
+    if(store.unlocked){ enterIntro(); return; }
+    const inp=document.getElementById('codeInput'); if(inp) inp.value=preset;
+    checkCode(); if(store.unlocked) return;
+  }
+  if(store.unlocked){ enterIntro(); }
+})();
+</script>
+</body>
+</html>
