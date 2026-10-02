@@ -63,6 +63,9 @@
   .tag-row{margin-top:4px}
   .tag-row span{display:inline-block;margin:3px;padding:4px 12px;border-radius:14px;
     background:#fff;border:1px solid var(--accent-line);font-size:12px;color:var(--accent-deep)}
+  .verdict{margin-top:14px;padding:12px 14px;border-radius:12px;background:#fff;
+    border:1px solid var(--accent-line);font-size:14px;color:#3a4566;line-height:1.7;text-align:left}
+  .verdict b{color:var(--accent-deep)}
   .sec p{font-size:14px;color:#4a5575;line-height:1.75;margin:0}
   .dim-row{display:flex;align-items:center;gap:10px;margin:9px 0}
   .dim-row .name{flex:0 0 60px;font-size:13.5px;font-weight:700;color:var(--accent-deep)}
@@ -183,6 +186,15 @@ const TYPES = {
 };
 const DIMS = ["R","I","A","S","E","C"];
 const DIM_NAME = {R:"现实型",I:"研究型",A:"艺术型",S:"社会型",E:"企业型",C:"常规型"};
+/* 主导类型最该往哪发展（一句话结论，直接回答「适合往哪走」） */
+const DIRECTION = {
+  R:"实打实的技术 / 手艺 / 一线执行类岗位",
+  I:"研究 / 分析 / 需要深度思考的专业岗",
+  A:"设计 / 内容 / 创意表达类岗位",
+  S:"教育 / 服务 / 咨询 / 人力等与人打交道的岗",
+  E:"销售 / 创业 / 管理 / 市场等影响他人的岗",
+  C:"财务 / 行政 / 运营 / 审计等需要秩序的岗"
+};
 
 /* 主导类型人设（结果页主体文案） */
 const PROFILE = {
@@ -411,6 +423,7 @@ function finish(){
       '<div class="muted" style="font-size:15px">'+arch.sub+'</div>' +
       '<div class="quote">霍兰德代码：'+code+'（'+DIM_NAME[t1]+'·'+DIM_NAME[t2]+'·'+DIM_NAME[t3]+'）</div>' +
       '<div class="tag-row">'+[t1,t2,t3].map(d=>'<span>'+DIM_NAME[d]+'</span>').join('')+'</div>' +
+      '<div class="verdict">结论：你最该往 <b>'+DIRECTION[t1]+'</b> 这条线发展；用 <b>'+DIM_NAME[t2]+'</b> 做加分项，把长板拉到最长。</div>' +
     '</div>' +
 
     '<div class="card sec">' +
@@ -421,8 +434,9 @@ function finish(){
 
     '<div class="card sec">' +
       '<h3>02 · 核心优势组合</h3>' +
-      '<p>你最突出的两种天赋是 <b style="color:var(--accent-deep)">'+DIM_NAME[t1]+'</b> 与 <b style="color:var(--accent-deep)">'+DIM_NAME[t2]+'</b>：'+
-      TYPES[t1].short+'的「'+PROFILE[t1].sub.split(' · ')[1]+'」配上'+TYPES[t2].short+'的底色，让你在「'+PROFILE[t1].sub.split(' · ')[0]+'」这类事上，既有冲劲也有方法。简单说——你天生适合 <b style="color:var(--accent-deep)">'+PROFILE[t1].sub.split(' · ')[0]+'</b> 的方向，再借 '+DIM_NAME[t2]+' 把事做深。</p>' +
+      '<p><b style="color:var(--accent-deep)">'+DIM_NAME[t1]+'</b> 是你的主天赋，'+TYPES[t1].short+'的底色让你在「'+DIRECTION[t1]+'」里最自在；<b style="color:var(--accent-deep)">'+DIM_NAME[t2]+'</b> 是加分项，它正好补上 '+TYPES[t1].short+' 通常缺的那一块。</p>' +
+      '<p style="margin-top:10px">把两者叠起来，你的组合优势是：既能靠 <b>'+TYPES[t1].short+'</b> 把事落地，又能借 <b>'+DIM_NAME[t2]+'</b> 多一个维度看问题——这比只有单一天赋的人更耐打。</p>' +
+      '<p style="margin-top:10px">怎么用：先在主天赋上做到「别人替代不了」，再把 '+DIM_NAME[t2]+' 当成放大器，别平均用力。</p>' +
     '</div>' +
 
     '<div class="card sec">' +
@@ -434,12 +448,13 @@ function finish(){
       '<h3>04 · 核心优势深度解读</h3>' +
       DIMS.map((d,i)=>{
         const lvl=pct[i]>=35?'high':(pct[i]>=18?'mid':'low');
-        const dep=TYPES[d].deep[lvl];
+        const parts=(TYPES[d].deep[lvl]||'·').split(' · ');
+        const label=parts[0], text=parts[1]||'';
         return '<div class="dim-deep">'+
           '<div class="dd-head"><b>'+DIM_NAME[d]+'</b><span class="dd-pct">'+pct[i]+'%</span></div>'+
           '<div class="dd-bar"><i style="width:'+pct[i]+'%"></i></div>'+
-          '<div class="dd-label">'+dep.label+'</div>'+
-          '<p class="dd-text">'+dep.text+'</p>'+
+          '<div class="dd-label">'+label+'</div>'+
+          (text?'<p class="dd-text">'+text+'</p>':'')+
         '</div>';
       }).join('') +
     '</div>' +
@@ -466,7 +481,7 @@ function finish(){
         '<div class="rec-card">'+
           '<div class="rec-head"><span class="rec-rank">'+(i+1)+'</span><b>'+m.c.name+'</b><span class="rec-pct">'+m.pct+'%</span></div>'+
           '<div class="rec-bar"><i style="width:'+m.pct+'%"></i></div>'+
-          '<p class="rec-why">与你的「'+DIM_NAME[t1]+'+'+DIM_NAME[t2]+'」天赋高度契合，发挥空间大。</p>'+
+          '<p class="rec-why">契合你的「'+DIM_NAME[t1]+'+'+DIM_NAME[t2]+'」天赋，尤其能发挥你「'+m.c.tags.join(' / ')+'」的一面。</p>'+
           '<div class="rec-tags">'+m.c.tags.map(t=>'<span>'+t+'</span>').join('')+'</div>'+
         '</div>'
       ).join('') +
